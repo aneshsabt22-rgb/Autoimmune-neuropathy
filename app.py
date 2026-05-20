@@ -40,6 +40,295 @@ st.set_page_config(
 )
 
 
+LIGHT_THEME_VARS = """
+:root {
+    color-scheme: light;
+    --bg-0: #f8fbfd;
+    --bg-1: #eef7fb;
+    --bg-2: #e7f0f7;
+    --panel: rgba(255, 255, 255, 0.88);
+    --panel-strong: rgba(255, 255, 255, 0.97);
+    --banner-start: rgba(239, 250, 255, 0.96);
+    --banner-end: rgba(255, 255, 255, 0.74);
+    --field: rgba(255, 255, 255, 0.98);
+    --field-muted: rgba(241, 248, 252, 0.96);
+    --control-bg: #ffffff;
+    --control-bg-hover: #eef8fc;
+    --control-disabled: #e8f1f7;
+    --line: rgba(14, 116, 144, 0.24);
+    --line-soft: rgba(71, 85, 105, 0.18);
+    --text: #102033;
+    --muted: #44576b;
+    --subtle: #66778a;
+    --cyan: #0891b2;
+    --cyan-2: #0e7490;
+    --blue: #2563eb;
+    --green: #047857;
+    --amber: #b45309;
+    --rose: #be123c;
+    --button-text: #f8fbfd;
+    --secondary-button-text: #102033;
+    --shadow: 0 18px 46px rgba(15, 23, 42, 0.12);
+}
+"""
+
+DARK_THEME_VARS = """
+:root {
+    color-scheme: dark;
+    --bg-0: #030712;
+    --bg-1: #07111f;
+    --bg-2: #0b1628;
+    --panel: rgba(12, 24, 42, 0.72);
+    --panel-strong: rgba(15, 29, 51, 0.88);
+    --banner-start: rgba(7, 17, 31, 0.82);
+    --banner-end: rgba(13, 38, 64, 0.70);
+    --field: rgba(5, 12, 24, 0.92);
+    --field-muted: rgba(3, 7, 18, 0.58);
+    --control-bg: rgba(5, 12, 24, 0.92);
+    --control-bg-hover: rgba(15, 29, 51, 0.96);
+    --control-disabled: rgba(15, 23, 42, 0.72);
+    --line: rgba(125, 211, 252, 0.20);
+    --line-soft: rgba(148, 163, 184, 0.16);
+    --text: #e5f2ff;
+    --muted: #a9bdd2;
+    --subtle: #8ea8c3;
+    --cyan: #22d3ee;
+    --cyan-2: #67e8f9;
+    --blue: #38bdf8;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --rose: #fb7185;
+    --button-text: #00111d;
+    --secondary-button-text: #e5f2ff;
+    --shadow: 0 24px 70px rgba(0, 0, 0, 0.40);
+}
+"""
+
+
+def enforced_widget_theme_css(mode):
+    """Final-pass CSS for Streamlit/BaseWeb widgets after the user picks a mode."""
+    if mode == "System":
+        return """
+<style>
+@media (prefers-color-scheme: light) {
+  :root {
+    --native-control-bg: #ffffff;
+    --native-control-bg-2: #f1f8fc;
+    --native-control-text: #102033;
+    --native-control-muted: #44576b;
+    --native-control-border: rgba(14, 116, 144, 0.24);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --native-control-bg: #111827;
+    --native-control-bg-2: #0b1628;
+    --native-control-text: #e5f2ff;
+    --native-control-muted: #a9bdd2;
+    --native-control-border: rgba(125, 211, 252, 0.28);
+  }
+}
+</style>
+""" + NATIVE_WIDGET_CSS
+
+    if mode == "Light":
+        return """
+<style>
+:root {
+  --native-control-bg: #ffffff;
+  --native-control-bg-2: #f1f8fc;
+  --native-control-text: #102033;
+  --native-control-muted: #44576b;
+  --native-control-border: rgba(14, 116, 144, 0.24);
+}
+</style>
+""" + NATIVE_WIDGET_CSS
+
+    return """
+<style>
+:root {
+  --native-control-bg: #111827;
+  --native-control-bg-2: #0b1628;
+  --native-control-text: #e5f2ff;
+  --native-control-muted: #a9bdd2;
+  --native-control-border: rgba(125, 211, 252, 0.28);
+}
+</style>
+""" + NATIVE_WIDGET_CSS
+
+
+NATIVE_WIDGET_CSS = """
+<style>
+/* Final native widget enforcement. This must be rendered after the theme selector. */
+[data-testid="stAppViewContainer"] div[data-testid="stSelectbox"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stMultiSelect"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stTextInput"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stTextArea"] * {
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+    text-shadow: none !important;
+}
+
+[data-testid="stAppViewContainer"] [data-baseweb="select"],
+[data-testid="stAppViewContainer"] [data-baseweb="select"] *,
+[data-testid="stAppViewContainer"] [data-baseweb="select"] > div,
+[data-testid="stAppViewContainer"] [data-baseweb="select"] > div > div,
+[data-testid="stAppViewContainer"] [data-baseweb="select"] input,
+[data-testid="stAppViewContainer"] [data-baseweb="input"],
+[data-testid="stAppViewContainer"] [data-baseweb="input"] *,
+[data-testid="stAppViewContainer"] [data-baseweb="input"] > div,
+[data-testid="stAppViewContainer"] [data-baseweb="input"] input,
+[data-testid="stAppViewContainer"] [data-baseweb="base-input"],
+[data-testid="stAppViewContainer"] [data-baseweb="base-input"] *,
+[data-testid="stAppViewContainer"] [data-baseweb="base-input"] > div,
+[data-testid="stAppViewContainer"] [data-baseweb="base-input"] input,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] input,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] > div,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] > div > div,
+[data-testid="stAppViewContainer"] div[data-testid="stTextInput"] input,
+[data-testid="stAppViewContainer"] div[data-testid="stTextArea"] textarea {
+    background: var(--native-control-bg) !important;
+    background-color: var(--native-control-bg) !important;
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+    border-color: var(--native-control-border) !important;
+    box-shadow: none !important;
+    caret-color: var(--cyan) !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stSelectbox"] [style*="background"],
+[data-testid="stAppViewContainer"] div[data-testid="stMultiSelect"] [style*="background"],
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [style*="background"],
+[data-testid="stAppViewContainer"] div[data-testid="stTextInput"] [style*="background"],
+[data-testid="stAppViewContainer"] div[data-testid="stTextArea"] [style*="background"] {
+    background: var(--native-control-bg) !important;
+    background-color: var(--native-control-bg) !important;
+}
+
+[data-testid="stAppViewContainer"] [data-baseweb="select"] *,
+[data-testid="stAppViewContainer"] [data-baseweb="input"] *,
+[data-testid="stAppViewContainer"] [data-baseweb="base-input"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] * {
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] button,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [data-baseweb="button"],
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [aria-label="Step up"],
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [aria-label="Step down"],
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [aria-label="Increment"],
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [aria-label="Decrement"],
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [role="button"],
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] button *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [data-baseweb="button"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [aria-label="Step up"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [aria-label="Step down"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [aria-label="Increment"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [aria-label="Decrement"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [role="button"] * {
+    background: var(--native-control-bg-2) !important;
+    background-color: var(--native-control-bg-2) !important;
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+    border-color: var(--native-control-border) !important;
+    box-shadow: none !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] > div > div:last-child,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] > div > div:last-child *,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [data-baseweb="input"] > div:last-child,
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] [data-baseweb="input"] > div:last-child * {
+    background: var(--native-control-bg-2) !important;
+    background-color: var(--native-control-bg-2) !important;
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stNumberInput"] svg,
+[data-testid="stAppViewContainer"] div[data-testid="stSelectbox"] svg,
+[data-testid="stAppViewContainer"] div[data-testid="stMultiSelect"] svg {
+    color: var(--native-control-text) !important;
+    fill: var(--native-control-text) !important;
+    stroke: var(--native-control-text) !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stSelectbox"] [data-baseweb="select"] *,
+[data-testid="stAppViewContainer"] div[data-testid="stMultiSelect"] [data-baseweb="select"] * {
+    background-color: var(--native-control-bg) !important;
+}
+
+[data-testid="stAppViewContainer"] [data-baseweb="popover"],
+[data-testid="stAppViewContainer"] [data-baseweb="popover"] *,
+[data-testid="stAppViewContainer"] [data-baseweb="menu"],
+[data-testid="stAppViewContainer"] [data-baseweb="menu"] *,
+[data-testid="stAppViewContainer"] ul[role="listbox"],
+[data-testid="stAppViewContainer"] ul[role="listbox"] *,
+[data-testid="stAppViewContainer"] li[role="option"],
+[data-testid="stAppViewContainer"] div[role="option"] {
+    background-color: var(--native-control-bg) !important;
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+    border-color: var(--native-control-border) !important;
+}
+
+[data-testid="stAppViewContainer"] li[role="option"]:hover,
+[data-testid="stAppViewContainer"] div[role="option"]:hover {
+    background-color: var(--native-control-bg-2) !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stFileUploader"],
+[data-testid="stAppViewContainer"] div[data-testid="stFileUploader"] section {
+    background: var(--native-control-bg-2) !important;
+    background-color: var(--native-control-bg-2) !important;
+    color: var(--native-control-text) !important;
+    border-color: var(--native-control-border) !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stFileUploader"] button,
+[data-testid="stAppViewContainer"] button[data-testid="baseButton-secondary"],
+[data-testid="stAppViewContainer"] button[kind="secondary"] {
+    background: var(--native-control-bg) !important;
+    background-color: var(--native-control-bg) !important;
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+    border: 1px solid var(--native-control-border) !important;
+    box-shadow: none !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stFileUploader"] button *,
+[data-testid="stAppViewContainer"] button[data-testid="baseButton-secondary"] *,
+[data-testid="stAppViewContainer"] button[kind="secondary"] * {
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stCheckbox"] label,
+[data-testid="stAppViewContainer"] div[data-testid="stCheckbox"] label *,
+[data-testid="stAppViewContainer"] div[data-testid="stCheckbox"] [role="checkbox"] {
+    color: var(--native-control-text) !important;
+    -webkit-text-fill-color: var(--native-control-text) !important;
+    border-color: var(--native-control-border) !important;
+}
+
+[data-testid="stAppViewContainer"] div[data-testid="stCheckbox"] [role="checkbox"] {
+    background-color: var(--native-control-bg) !important;
+}
+
+[data-testid="stAppViewContainer"] [style*="background-color: rgb(38, 39, 48)"],
+[data-testid="stAppViewContainer"] [style*="background-color: rgb(19, 23, 32)"],
+[data-testid="stAppViewContainer"] [style*="background: rgb(38, 39, 48)"],
+[data-testid="stAppViewContainer"] [style*="background: rgb(19, 23, 32)"],
+[data-testid="stAppViewContainer"] [style*="background-color: rgb(250, 250, 250)"],
+[data-testid="stAppViewContainer"] [style*="background-color: rgb(255, 255, 255)"] {
+    background: var(--native-control-bg) !important;
+    background-color: var(--native-control-bg) !important;
+}
+</style>
+"""
+
+
 # ─────────────────────────────────────────────
 #  CUSTOM CSS
 # ─────────────────────────────────────────────
@@ -49,27 +338,70 @@ st.markdown(
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
-    --bg-0: #030712;
-    --bg-1: #07111f;
-    --bg-2: #0b1628;
-    --panel: rgba(12, 24, 42, 0.72);
-    --panel-strong: rgba(15, 29, 51, 0.88);
-    --line: rgba(125, 211, 252, 0.20);
-    --line-soft: rgba(148, 163, 184, 0.16);
-    --text: #e5f2ff;
-    --muted: #8ea8c3;
-    --subtle: #5f7894;
-    --cyan: #22d3ee;
-    --cyan-2: #67e8f9;
-    --blue: #38bdf8;
-    --green: #34d399;
-    --amber: #fbbf24;
-    --rose: #fb7185;
-    --shadow: 0 24px 70px rgba(0, 0, 0, 0.40);
+    color-scheme: light;
+    --bg-0: #f8fbfd;
+    --bg-1: #eef7fb;
+    --bg-2: #e7f0f7;
+    --panel: rgba(255, 255, 255, 0.88);
+    --panel-strong: rgba(255, 255, 255, 0.97);
+    --banner-start: rgba(239, 250, 255, 0.96);
+    --banner-end: rgba(255, 255, 255, 0.74);
+    --field: rgba(255, 255, 255, 0.98);
+    --field-muted: rgba(241, 248, 252, 0.96);
+    --control-bg: #ffffff;
+    --control-bg-hover: #eef8fc;
+    --control-disabled: #e8f1f7;
+    --line: rgba(14, 116, 144, 0.24);
+    --line-soft: rgba(71, 85, 105, 0.18);
+    --text: #102033;
+    --muted: #44576b;
+    --subtle: #66778a;
+    --cyan: #0891b2;
+    --cyan-2: #0e7490;
+    --blue: #2563eb;
+    --green: #047857;
+    --amber: #b45309;
+    --rose: #be123c;
+    --button-text: #f8fbfd;
+    --secondary-button-text: #102033;
+    --shadow: 0 18px 46px rgba(15, 23, 42, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --bg-0: #030712;
+        --bg-1: #07111f;
+        --bg-2: #0b1628;
+        --panel: rgba(12, 24, 42, 0.72);
+        --panel-strong: rgba(15, 29, 51, 0.88);
+        --banner-start: rgba(7, 17, 31, 0.82);
+        --banner-end: rgba(13, 38, 64, 0.70);
+        --field: rgba(5, 12, 24, 0.92);
+        --field-muted: rgba(3, 7, 18, 0.58);
+        --control-bg: rgba(5, 12, 24, 0.92);
+        --control-bg-hover: rgba(15, 29, 51, 0.96);
+        --control-disabled: rgba(15, 23, 42, 0.72);
+        --line: rgba(125, 211, 252, 0.20);
+        --line-soft: rgba(148, 163, 184, 0.16);
+        --text: #e5f2ff;
+        --muted: #a9bdd2;
+        --subtle: #8ea8c3;
+        --cyan: #22d3ee;
+        --cyan-2: #67e8f9;
+        --blue: #38bdf8;
+        --green: #34d399;
+        --amber: #fbbf24;
+        --rose: #fb7185;
+        --button-text: #00111d;
+        --secondary-button-text: #e5f2ff;
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.40);
+    }
 }
 
 html, body, [class*="css"] {
     font-family: 'Manrope', sans-serif !important;
+    color: var(--text) !important;
 }
 
 #MainMenu, footer, header { visibility: hidden; }
@@ -95,14 +427,14 @@ html, body, [class*="css"] {
     position: relative;
     overflow: hidden;
     background:
-      linear-gradient(135deg, rgba(7, 17, 31, 0.82), rgba(13, 38, 64, 0.70)),
-      radial-gradient(circle at 8% 12%, rgba(34, 211, 238, 0.24), transparent 24rem);
+      linear-gradient(135deg, var(--banner-start), var(--banner-end)),
+      radial-gradient(circle at 8% 12%, rgba(34, 211, 238, 0.16), transparent 24rem);
     color: var(--text);
     padding: 28px 34px 26px;
-    border-radius: 0 0 22px 22px;
+    border-radius: 18px;
     margin-bottom: 28px;
     box-shadow: var(--shadow);
-    border: 1px solid rgba(125, 211, 252, 0.22);
+    border: 1px solid rgba(14, 116, 144, 0.18);
     backdrop-filter: blur(18px);
 }
 .top-banner::after {
@@ -123,13 +455,13 @@ html, body, [class*="css"] {
     margin: 0 0 6px 0;
     color: var(--text) !important;
 }
-.top-banner p  { font-size: 13px; color: #a8dff0 !important; margin: 0; }
+.top-banner p  { font-size: 13px; color: var(--muted) !important; margin: 0; }
 .top-banner span { color: inherit !important; }
 .badge-row { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 15px; }
 .badge {
-    background: rgba(8, 20, 36, 0.76);
-    border: 1px solid rgba(103, 232, 249, 0.26);
-    color: #dffaff !important;
+    background: var(--field-muted);
+    border: 1px solid var(--line);
+    color: var(--text) !important;
     font-size: 11px;
     font-weight: 800;
     padding: 5px 12px;
@@ -180,11 +512,11 @@ div[data-testid="stCaptionContainer"] p {
     gap: 13px;
     margin: 32px 0 16px;
     padding: 14px 16px;
-    background: linear-gradient(135deg, rgba(15, 29, 51, 0.72), rgba(8, 20, 36, 0.58));
+    background: linear-gradient(135deg, var(--panel-strong), var(--panel));
     border: 1px solid var(--line-soft);
     border-left: 3px solid var(--cyan);
     border-radius: 16px;
-    box-shadow: 0 14px 34px rgba(0,0,0,0.22);
+    box-shadow: var(--shadow);
 }
 .sec-num {
     width: 34px;
@@ -216,11 +548,11 @@ div[data-testid="stCaptionContainer"] p {
     margin: 16px 0 10px;
 }
 .mini-metric {
-    background: linear-gradient(180deg, rgba(15, 29, 51, 0.88), rgba(7, 17, 31, 0.74));
-    border: 1px solid rgba(125, 211, 252, 0.20);
+    background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+    border: 1px solid var(--line);
     border-radius: 14px;
     padding: 13px 15px;
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+    box-shadow: var(--shadow);
 }
 .mini-metric .label {
     font-size: 10px;
@@ -238,8 +570,8 @@ div[data-testid="stCaptionContainer"] p {
 }
 
 .hint-box {
-    background: linear-gradient(180deg, rgba(15, 29, 51, 0.92), rgba(6, 18, 32, 0.80));
-    border: 1px solid rgba(103, 232, 249, 0.22);
+    background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+    border: 1px solid var(--line);
     color: var(--muted);
     border-radius: 14px;
     padding: 14px 16px;
@@ -259,7 +591,7 @@ div[data-testid="stCaptionContainer"] p {
 }
 .chip {
     background: rgba(34, 211, 238, 0.12);
-    color: #b8f7ff;
+    color: var(--cyan-2);
     border: 1px solid rgba(103, 232, 249, 0.28);
     font-size: 11px;
     font-weight: 800;
@@ -268,43 +600,59 @@ div[data-testid="stCaptionContainer"] p {
 }
 .chip.comorb {
     background: rgba(52, 211, 153, 0.12);
-    color: #c6f7df;
+    color: var(--green);
     border-color: rgba(52, 211, 153, 0.30);
 }
 .chip.hot {
     background: rgba(251, 113, 133, 0.13);
-    color: #ffd6dd;
+    color: var(--rose);
     border-color: rgba(251, 113, 133, 0.30);
 }
 
 div[data-testid="stVerticalBlockBorderWrapper"] {
-    background: rgba(9, 20, 36, 0.66);
-    border-color: rgba(125, 211, 252, 0.20) !important;
+    background: var(--panel);
+    border-color: var(--line) !important;
     border-radius: 16px !important;
     box-shadow: 0 14px 34px rgba(0,0,0,0.22);
 }
 
 div[data-testid="stFileUploader"] {
-    background: rgba(9, 20, 36, 0.72);
-    border: 1px solid rgba(125, 211, 252, 0.18);
+    background: var(--panel-strong);
+    border: 1px solid var(--line-soft);
     border-radius: 16px;
     padding: 12px;
-    box-shadow: 0 16px 38px rgba(0,0,0,0.22);
+    box-shadow: var(--shadow);
 }
 div[data-testid="stFileUploader"] section {
-    background: rgba(3, 7, 18, 0.58) !important;
-    border: 1px dashed rgba(103, 232, 249, 0.30) !important;
+    background: var(--field-muted) !important;
+    border: 1px dashed var(--line) !important;
     border-radius: 12px !important;
 }
 
 div[data-testid="stMultiSelect"] [data-baseweb="select"],
 div[data-testid="stSelectbox"] [data-baseweb="select"],
 div[data-testid="stNumberInput"] input {
-    background: rgba(5, 12, 24, 0.92) !important;
+    background: var(--control-bg) !important;
     color: var(--text) !important;
-    border: 1px solid rgba(125, 211, 252, 0.22) !important;
+    border: 1px solid var(--line) !important;
     border-radius: 12px !important;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 26px rgba(0,0,0,0.18);
+}
+div[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+div[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+div[data-testid="stMultiSelect"] [data-baseweb="select"] input,
+div[data-testid="stSelectbox"] [data-baseweb="select"] input,
+div[data-testid="stNumberInput"] input,
+div[data-testid="stTextInput"] input,
+div[data-testid="stTextArea"] textarea {
+    background: var(--control-bg) !important;
+    color: var(--text) !important;
+    caret-color: var(--cyan) !important;
+}
+div[data-testid="stSelectbox"] svg,
+div[data-testid="stMultiSelect"] svg {
+    color: var(--muted) !important;
+    fill: var(--muted) !important;
 }
 div[data-testid="stMultiSelect"] [data-baseweb="select"]:focus-within,
 div[data-testid="stSelectbox"] [data-baseweb="select"]:focus-within,
@@ -315,14 +663,14 @@ div[data-testid="stNumberInput"] input:focus {
 div[data-testid="stMultiSelect"] [data-baseweb="tag"] {
     max-width: 100%;
     background: rgba(34, 211, 238, 0.14) !important;
-    color: #dffaff !important;
+    color: var(--text) !important;
     border: 1px solid rgba(103, 232, 249, 0.26) !important;
 }
 div[data-baseweb="popover"],
 div[data-baseweb="menu"],
 ul[role="listbox"] {
-    background: rgba(5, 12, 24, 0.98) !important;
-    border: 1px solid rgba(103, 232, 249, 0.25) !important;
+    background: var(--control-bg) !important;
+    border: 1px solid var(--line) !important;
     border-radius: 14px !important;
     box-shadow: 0 22px 54px rgba(0,0,0,0.48) !important;
     color: var(--text) !important;
@@ -340,9 +688,25 @@ div[data-baseweb="popover"] * {
     color: var(--text) !important;
 }
 
+div[data-testid="stFileUploader"] button,
+div[data-testid="stFileUploader"] button:disabled {
+    background: var(--control-disabled) !important;
+    color: var(--secondary-button-text) !important;
+    border: 1px solid var(--line-soft) !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+div[data-testid="stFileUploader"] button *,
+div[data-testid="stFileUploader"] button:disabled * {
+    color: var(--secondary-button-text) !important;
+    opacity: 1 !important;
+}
+
 div[data-testid="stButton"] > button {
     background: linear-gradient(135deg, #22d3ee, #2563eb) !important;
-    color: #00111d !important;
+    color: var(--button-text) !important;
     font-weight: 900 !important;
     font-size: 15px !important;
     padding: 12px 30px !important;
@@ -356,7 +720,7 @@ div[data-testid="stButton"] > button:hover {
     transform: translateY(-1px);
 }
 div[data-testid="stButton"] > button p {
-    color: #00111d !important;
+    color: var(--button-text) !important;
     font-weight: 900 !important;
 }
 
@@ -367,6 +731,160 @@ div[data-testid="stCheckbox"] [data-testid="stWidgetLabel"] p {
     color: var(--text) !important;
 }
 hr { margin: 1.5rem 0; border-color: rgba(125,211,252,0.18); }
+
+.stApp, .stApp * {
+    color: var(--text);
+}
+
+input, textarea, [contenteditable="true"],
+div[data-baseweb="select"] *,
+div[data-baseweb="popover"] *,
+ul[role="listbox"] *,
+li[role="option"] {
+    color: var(--text) !important;
+}
+
+div[data-baseweb="select"],
+div[data-baseweb="select"] > div,
+div[data-baseweb="select"] > div > div,
+div[data-baseweb="select"] input {
+    background-color: var(--control-bg) !important;
+}
+
+div[data-baseweb="select"]:hover,
+div[data-baseweb="select"]:hover > div,
+li[role="option"]:hover,
+div[role="option"]:hover {
+    background-color: var(--control-bg-hover) !important;
+}
+
+/* Hard override Streamlit/BaseWeb dark-theme residues in light mode. */
+div[data-baseweb="input"],
+div[data-baseweb="input"] *,
+div[data-baseweb="base-input"],
+div[data-baseweb="base-input"] *,
+div[data-baseweb="select"],
+div[data-baseweb="select"] *,
+div[data-baseweb="popover"],
+div[data-baseweb="popover"] *,
+div[data-baseweb="menu"],
+div[data-baseweb="menu"] * {
+    color: var(--text) !important;
+    -webkit-text-fill-color: var(--text) !important;
+}
+
+div[data-baseweb="input"],
+div[data-baseweb="input"] > div,
+div[data-baseweb="base-input"],
+div[data-baseweb="base-input"] > div,
+div[data-baseweb="select"],
+div[data-baseweb="select"] > div,
+div[data-baseweb="select"] > div > div,
+div[data-baseweb="select"] input,
+div[data-testid="stNumberInput"] input,
+div[data-testid="stTextInput"] input,
+div[data-testid="stTextArea"] textarea,
+div[data-testid="stMultiSelect"] [data-baseweb="select"],
+div[data-testid="stSelectbox"] [data-baseweb="select"] {
+    background: var(--control-bg) !important;
+    background-color: var(--control-bg) !important;
+    border-color: var(--line) !important;
+    box-shadow: none !important;
+}
+
+div[data-testid="stNumberInput"] button,
+div[data-testid="stNumberInput"] [role="button"],
+div[data-testid="stNumberInput"] [data-baseweb="input"] button,
+div[data-testid="stNumberInput"] [data-baseweb="input"] [role="button"] {
+    background: var(--control-bg-hover) !important;
+    background-color: var(--control-bg-hover) !important;
+    color: var(--text) !important;
+    -webkit-text-fill-color: var(--text) !important;
+    border-color: var(--line-soft) !important;
+    box-shadow: none !important;
+}
+
+div[data-testid="stNumberInput"] button svg,
+div[data-testid="stNumberInput"] [role="button"] svg,
+div[data-testid="stSelectbox"] svg,
+div[data-testid="stMultiSelect"] svg {
+    color: var(--text) !important;
+    fill: var(--text) !important;
+    stroke: var(--text) !important;
+}
+
+div[data-testid="stFileUploader"] button,
+button[data-testid="baseButton-secondary"],
+button[kind="secondary"] {
+    background: var(--control-bg) !important;
+    background-color: var(--control-bg) !important;
+    color: var(--secondary-button-text) !important;
+    -webkit-text-fill-color: var(--secondary-button-text) !important;
+    border: 1px solid var(--line-soft) !important;
+    box-shadow: none !important;
+}
+
+div[data-testid="stFileUploader"] button *,
+button[data-testid="baseButton-secondary"] *,
+button[kind="secondary"] * {
+    color: var(--secondary-button-text) !important;
+    -webkit-text-fill-color: var(--secondary-button-text) !important;
+}
+
+div[data-testid="stCheckbox"] label,
+div[data-testid="stCheckbox"] label *,
+div[data-testid="stCheckbox"] span {
+    color: var(--text) !important;
+    -webkit-text-fill-color: var(--text) !important;
+}
+
+div[data-testid="stCheckbox"] [data-testid="stCheckbox"] div,
+div[data-testid="stCheckbox"] [role="checkbox"] {
+    background-color: var(--control-bg) !important;
+    border-color: var(--line) !important;
+}
+
+div[data-testid="stMetric"],
+div[data-testid="stMetric"] *,
+div[data-testid="stAlert"],
+div[data-testid="stAlert"] * {
+    color: var(--text) !important;
+}
+
+.appearance-shell {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 10px;
+}
+
+.appearance-label {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+div[data-testid="stRadio"] {
+    display: flex;
+    justify-content: flex-end;
+}
+
+div[data-testid="stRadio"] [role="radiogroup"] {
+    background: var(--panel-strong);
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    padding: 4px 6px;
+    box-shadow: var(--shadow);
+}
+
+div[data-testid="stRadio"] label,
+div[data-testid="stRadio"] label p {
+    color: var(--text) !important;
+    font-weight: 800 !important;
+}
 
 @media (max-width: 900px) {
     .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1790,6 +2308,8 @@ if "test_entries" not in st.session_state:
     st.session_state.test_entries = []
 if "last_case" not in st.session_state:
     st.session_state.last_case = None
+if "ui_theme" not in st.session_state:
+    st.session_state.ui_theme = "System"
 
 learning_stats = get_learning_stats()
 active_adaptive_model = learning_stats["model"]
@@ -1798,6 +2318,31 @@ active_adaptive_model = learning_stats["model"]
 # ─────────────────────────────────────────────
 #  TOP BANNER
 # ─────────────────────────────────────────────
+theme_blank, theme_picker = st.columns([7, 2])
+with theme_picker:
+    st.markdown(
+        "<div class='appearance-shell'><span class='appearance-label'>Mode</span></div>",
+        unsafe_allow_html=True,
+    )
+    selected_theme = st.radio(
+        "Appearance mode",
+        ["System", "Light", "Dark"],
+        horizontal=True,
+        label_visibility="collapsed",
+        key="ui_theme",
+    )
+
+theme_override = ""
+if selected_theme == "Light":
+    theme_override = LIGHT_THEME_VARS
+elif selected_theme == "Dark":
+    theme_override = DARK_THEME_VARS
+
+if theme_override:
+    st.markdown(f"<style>{theme_override}</style>", unsafe_allow_html=True)
+
+st.markdown(enforced_widget_theme_css(selected_theme), unsafe_allow_html=True)
+
 st.markdown(
     f"""
 <div class="top-banner">
@@ -1834,7 +2379,7 @@ if uploaded_file:
 st.markdown("### 👤 Patient Details")
 col_age, col_gender, col_csf = st.columns([2, 2, 1])
 with col_age:
-    age = st.slider("Age", min_value=1, max_value=100, value=40, format="%d yrs")
+    age = st.slider("Age", min_value=0, max_value=100, value=0, format="%d yrs")
 with col_gender:
     gender = st.selectbox("Gender", ["Select", "Male", "Female"], index=0)
 with col_csf:
